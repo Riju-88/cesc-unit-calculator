@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CESC Unit Calculator</title>
+  <style type="text/css" media="all">
+    body{
+      display: grid;
+      /* margin: auto; */
+      place-items: center;
+    
+    }
+    button {
+      /* background-color: rgb(31, 130, 243); */
+      background: linear-gradient(130deg, rgba(4, 72, 150, 0.986), rgb(31, 130, 243));
+      display: block;
+      color: rgb(255, 255, 255);
+      font-weight: bold;
+      font-size: 1.2rem;
+      padding: 0.6em 1em;
+      border-radius: 1rem;
+      border: none;
+    }
+    button:active{
+      /* background-color: rgb(8, 6, 107); */
+      background: linear-gradient(-130deg, rgba(3, 46, 110, 0.986), rgb(0, 128, 202));
+      color: rgb(172, 201, 245);
+    }
+
+    span {
+      color: rgb(214, 6, 6);
+    }
+
+    #amount {
+      color: rgb(25, 73, 230);
+    }
+
+    .cont {
+      width: calc(100vw - 2rem);
+      height: calc(100vh - 2rem);
+      display: grid;
+      border: 1px ridge steelblue;
+      border-radius: 1rem;
+      place-items: center;
+    }
+    footer p{
+      margin: 0;
+    }
+    h2,
+    h3 {
+      margin: 0.8rem;
+     
+    }
+
+    h2 {
+      color: rgb(0, 138, 230);
+    }
+
+    #unit {
+      padding: 0.5rem;
+      border-radius: 1.2rem;
+      margin: 0.4rem;
+    }
+
+    #output {
+      background-color: rgb(215, 215, 216);
+      padding: 1rem;
+      border-radius: 0.8rem;
+      margin: 0.8rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="cont">
+    <div>
+      <h2>CESC Unit Calculator</h2>
+    </div>
+    <label for="unit">
+      <h3>Enter Units</h3>
+    </label>
+    <input type="number" name="unit" id="unit">
+    <button id="get-amount">Calculate</button>
+    <div id="output">
+      <h3>Energy Charges: <span id="energy-charge"></span>
+      </h3>
+      <h3>MVCA: 0</h3>
+      <h3>Adjustments: --</h3>
+      <h3>Fixed Charges: +15</h3>
+      <h3>Meter Rent: +10</h3>
+      <h3>Rebate: <span id="rebate"></span><span>(-1% assumed value)</span></h3>
+      <h3>Net Amount: <span id="amount"></span></h3>
+    </div>
+    <footer><p>This tool is configured for personal use only. Source code can be found on my <a href="https://github.com/Riju-88/cesc-unit-calculator" target="_blank">Github</a> repository.</p></footer>
+  </div>
+  <script type="text/javascript" charset="utf-8">
+    // fixed charge +15
+    // Rent +10
+    // rebate about -1% of total
+
+    //1~25 : 5.18
+    //26~(26+35)=61 : 5.69
+    //61~(61+40)=101 : 6.70
+    //101~(101+50)=151 : 7.45
+    //151~(151+50)=201 : 7.62
+    //201~(201+100)=301 : 7.62
+    // above 300 : 9.21
+    const get_amount = document.querySelector("#get-amount");
+    get_amount.addEventListener("click", () => {
+      let u25 = 25 * 5.18;
+      let u61 = 35 * 5.69;
+      let u101 = 40 * 6.70;
+      let u151 = 50 * 7.45;
+      let u201 = 50 * 7.62;
+      let u301 = 100 * 7.62;
+      let abv300 = 9.21;
+      let unit = document.querySelector("#unit").value;
+      let energy_charge = document.querySelector("#energy-charge");
+      let amount = document.querySelector("#amount");
+      let rebateDOM = document.querySelector("#rebate");
+      if (unit <= 25) {
+        console.log("block 1");
+        let total = unit * 5.18;
+        let fixed = total + 15;
+        let mtr = fixed + 10;
+        let rebate = Math.round(mtr * 0.01);
+       let net_amount = Math.round(mtr - rebate);
+        rebateDOM.innerHTML = rebate;
+        energy_charge.innerHTML = Math.round(total);
+        amount.innerHTML = net_amount;
+        return net_amount;
+      } else if (unit > 25 && unit <= 60) {
+        console.log("block 2");
+        let temp1 = unit - 25;
+        //35*5.69
+        let res = temp1 * 5.69;
+        let total = u25 + res;
+        let fixed = total + 15;
+        let mtr = fixed + 10;
+        let rebate = Math.round(mtr * 0.01);
+       let net_amount = Math.round(mtr - rebate);
+        rebateDOM.innerHTML = rebate;
+        energy_charge.innerHTML = Math.round(total);
+        amount.innerHTML = net_amount;
+        return net_amount;
+      } else if (unit > 60 && unit <= 100) {
+        console.log("block 3");
+        let temp1 = unit - 25;
+        let temp2 = temp1 - 35;
+        //6.70
+        let res = temp2 * 6.70;
+        let total = u25 + u61 + res;
+        let fixed = total + 15;
+        let mtr = fixed + 10;
+        let rebate = Math.round(mtr * 0.01);
+       let net_amount = Math.round(mtr - rebate);
+        rebateDOM.innerHTML = rebate;
+        energy_charge.innerHTML = Math.round(total);
+        amount.innerHTML = net_amount;
+        return net_amount;
+      } else if (unit >= 100 && unit <= 150) {
+        console.log("block 4");
+        let temp1 = unit - 25;
+        let temp2 = temp1 - 35;
+        let temp3 = temp2 - 40;
+
+        //7.45
+        let res = temp3 * 7.45;
+        let total = u25 + u61 + u101 + res;
+        let fixed = total + 15;
+        let mtr = fixed + 10;
+        let rebate = Math.round(mtr * 0.01);
+       let net_amount = Math.round(mtr - rebate);
+        rebateDOM.innerHTML = rebate;
+        energy_charge.innerHTML = Math.round(total);
+        amount.innerHTML = net_amount;
+        return net_amount;
+      } else if (unit > 150 && unit <= 200) {
+        console.log("block 5");
+        let temp1 = unit - 25;
+        let temp2 = temp1 - 35;
+        let temp3 = temp2 - 40;
+        let temp4 = temp3 - 50;
+        //console.log("current unit: "+temp4);
+        //7.62
+        let res = temp4 * 7.62;
+        let total = u25 + u61 + u101 + u151 + res;
+        let fixed = total + 15;
+        let mtr = fixed + 10;
+        let rebate = Math.round(mtr * 0.01);
+       let net_amount = Math.round(mtr - rebate);
+        rebateDOM.innerHTML = rebate;
+        energy_charge.innerHTML = Math.round(total);
+        amount.innerHTML = net_amount;
+        return net_amount;
+      } else if (unit > 200 && unit <= 300) {
+        console.log("block 6");
+        let temp1 = unit - 25;
+        let temp2 = temp1 - 35;
+        let temp3 = temp2 - 40;
+        let temp4 = temp3 - 50;
+        let temp5 = temp4 - 50;
+        //7.62
+        let res = temp5 * 7.62;
+        let total = u25 + u61 + u101 + u151 + u201 + res;
+        let fixed = total + 15;
+        let mtr = fixed + 10;
+        let rebate = Math.round(mtr * 0.01);
+       let net_amount = Math.round(mtr - rebate);
+        rebateDOM.innerHTML = rebate;
+        energy_charge.innerHTML = Math.round(total);
+        amount.innerHTML = net_amount;
+        return net_amount;
+      } else if (unit > 300) {
+        console.log("block 7");
+        let temp1 = unit - 25;
+        let temp2 = temp1 - 35;
+        let temp3 = temp2 - 40;
+        let temp4 = temp3 - 50;
+        let temp5 = temp4 - 50;
+        let temp6 = temp5 - 100;
+        //9.21
+        let res = temp6 * 9.21;
+        let total = u25 + u61 + u101 + u151 + u201 + u301 + res;
+      
+        let fixed = total + 15;
+        let mtr = fixed + 10;
+        let rebate = Math.round(mtr * 0.01);
+        
+       let net_amount = Math.round(mtr - rebate);
+        
+        rebateDOM.innerHTML = rebate;
+        energy_charge.innerHTML = Math.round(total);
+        
+        amount.innerHTML = net_amount;
+        return net_amount;
+      }
+    })
+  </script>
+</body>
+
+</html>
